@@ -20,11 +20,12 @@ void MmInfo::MmAlloc(Mm *page,int dwSize)
 
 void MmInfo::MmReAlloc(Mm *page, int dwSize)
 {
-	if (this->Location != NULL) {
+	if (MmCheck(page) > dwSize) {
 		if (this->dwSize > 0) {
 			VirtualFree(this->Location, this->dwSize, MEM_DECOMMIT | MEM_RELEASE);
 			this->dwSize = dwSize;
-			VirtualAlloc(this->Location, this->dwSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+			MmCheck(page);
+			VirtualAlloc(page->nextAddr, this->dwSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 		}
 	}
 }
@@ -67,7 +68,6 @@ inline void MmInfo::MmWrite(Mm *page, int dwSize,void* buff)
 		for (int i = 0; i < this->dwSize; i++) {
 			this->Location = buff;
 		}
-		
 	}
 
 }
@@ -81,6 +81,5 @@ MmInfo *Mm::CreatePage()
 	this->pPage = VirtualAlloc(NULL, sysInfo.dwPageSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 	this->dwPage = sysInfo.dwPageSize;
 	SecureZeroMemory(&sysInfo, sizeof(SYSTEM_INFO));
-
 	return &MmInfo();
 }
