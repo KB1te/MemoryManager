@@ -1,60 +1,86 @@
 #include "MemMng.h"
 
 
-void Mm::MmFree()
+void MmInfo::MmFree(Mm *page, int dwSize)
 {
-	VirtualFree(this->info.Location, this->info.dwSize, MEM_DECOMMIT | MEM_RELEASE);
-	SecureZeroMemory(this->info.Location, this->info.dwSize);
+	VirtualFree(this->Location, this->dwSize, MEM_DECOMMIT | MEM_RELEASE);
+	SecureZeroMemory(this->Location, this->dwSize);
 }
 
-LPVOID Mm::MmAlloc(int dwSize)
+void MmInfo::MmAlloc(Mm *page,int dwSize)
 {
-		
-	LPVOID	status;
-	status = VirtualAlloc(NULL, dwSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
-	if (status != NULL) {
-		this->info.Location = status;
-		this->info.dwSize = dwSize;
-		SecureZeroMemory(status, sizeof(dwSize));
-		return status;
+	if (MmCheck(page) > dwSize) {
+		this->Location = VirtualAlloc(page->nextAddr, dwSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+		this->dwSize = dwSize;
 	}
 
-	return nullptr;
 	
 }
 
-void Mm::MmReAlloc(int dwSize)
+void MmInfo::MmReAlloc(Mm *page, int dwSize)
 {
-	if (this->info.Location != NULL) {
-		if (this->info.dwSize > 0) {
-			VirtualFree(this->info.Location, this->info.dwSize, MEM_DECOMMIT | MEM_RELEASE);
-			this->info.dwSize = dwSize;
-			VirtualAlloc(this->info.Location, this->info.dwSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
+	if (this->Location != NULL) {
+		if (this->dwSize > 0) {
+			VirtualFree(this->Location, this->dwSize, MEM_DECOMMIT | MEM_RELEASE);
+			this->dwSize = dwSize;
+			VirtualAlloc(this->Location, this->dwSize, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 		}
 	}
 }
 
-void Mm::MmRead(void* buff)
+void MmInfo::MmRead(Mm *page, int dwSize,void* buff)
 {
-	if (sizeof(buff) == this->info.dwSize) {
+	if (sizeof(buff) == this->dwSize) {
 		
-		for (int i = 0; i < this->info.dwSize; i++) {
-			buff = this->info.Location;
+		for (int i = 0; i < this->dwSize; i++) {
+			buff = this->Location;
 		}
 		
 	}
 	
 }
 
-
-inline void Mm::MmWrite(void* buff)
+int MmInfo::MmCheck(Mm *page)
 {
-	if (sizeof(buff) == this->info.dwSize) {
-		for (int i = 0; i < this->info.dwSize; i++) {
-			this->info.Location = buff;
+	int vazio = 0;
+	int ocupado = 0;
+
+	DWORD read = (DWORD)page->pPage;
+
+	for (int i = 0; i < page->dwPage; i++) {
+		if (read + 1 == NULL) {
+			vazio++;
+		}
+		else {
+			ocupado++;
+		}
+	}
+	page->nextAddr = reinterpret_cast<LPVOID>((DWORD)page->pPage + ocupado);
+	return vazio;
+}
+
+
+inline void MmInfo::MmWrite(Mm *page, int dwSize,void* buff)
+{
+	if (sizeof(buff) == this->dwSize) {
+		for (int i = 0; i < this->dwSize; i++) {
+			this->Location = buff;
 		}
 		
 	}
 
+}
+
+
+MmInfo *Mm::CreatePage()
+{
+	SYSTEM_INFO		sysInfo;
+	SecureZeroMemory(&sysInfo, sizeof(SYSTEM_INFO));
+	GetSystemInfo(&sysInfo);
+	this->pPage = VirtualAlloc(NULL, sysInfo.dwPageSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+	this->dwPage = sysInfo.dwPageSize;
+	SecureZeroMemory(&sysInfo, sizeof(SYSTEM_INFO));
+
+	return &MmInfo();
 }
