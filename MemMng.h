@@ -3,20 +3,29 @@
 #include <memory>
 #include <Windows.h>
 
+class Mm;
 
 struct MmInfo {
+	
+	void	MmFree(Mm* page, int dwSize);
+	void	MmAlloc(Mm *page, int dwSize);
+	void	MmReAlloc(Mm *page, int dwSize);
+	void	MmWrite(Mm *page, int dwSize, void* buff);
+	void	MmRead(Mm *page, int dwSize, void* buff);
+	int		MmCheck(Mm *page);
+
+private:
 	LPVOID	Location;
 	int		dwSize;
 };
 
+
 class Mm{
 public:
-	void MmFree();
-	LPVOID	MmAlloc(int dwSize);
-	void MmReAlloc(int dwSize);
-	void MmWrite(void* buff);
-	void MmRead(void* buff);
-private:
-	MmInfo	 info;
+	MmInfo	*CreatePage();
+	LPVOID	pPage;
+	LPVOID	nextAddr;
+	int		dwPage;
 };
+
 
