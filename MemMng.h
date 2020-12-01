@@ -12,7 +12,7 @@ struct MmInfo {
 	void	MmReAlloc(Mm *page, int dwSize);
 	void	MmWrite(Mm *page, int dwSize, void* buff);
 	void	MmRead(Mm *page, int dwSize, void* buff);
-	int		MmCheck(Mm *page);
+	int	MmCheck(Mm *page);
 
 private:
 	LPVOID	Location;
