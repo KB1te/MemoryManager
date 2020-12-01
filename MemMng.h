@@ -16,7 +16,7 @@ struct MmInfo {
 
 private:
 	LPVOID	Location;
-	int		dwSize;
+	int	dwSize;
 };
 
 
@@ -25,7 +25,7 @@ public:
 	MmInfo	*CreatePage();
 	LPVOID	pPage;
 	LPVOID	nextAddr;
-	int		dwPage;
+	int	dwPage;
 };
 
 
