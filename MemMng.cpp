@@ -50,7 +50,7 @@ int MmInfo::MmCheck(Mm *page)
 	DWORD read = (DWORD)page->pPage;
 
 	for (int i = 0; i < page->dwPage; i++) {
-		if (read + 1 == NULL) {
+		if (read++ == NULL) {
 			vazio++;
 		}
 		else {
