@@ -50,11 +50,13 @@ int MmInfo::MmCheck(Mm *page)
 	DWORD read = (DWORD)page->pPage;
 
 	for (int i = 0; i < page->dwPage; i++) {
-		if (read++ == NULL) {
+		if (read == NULL) {
 			filled--;
+			read++;
 		}
 		else {
 			filled++;
+			read++;
 		}
 	}
 	page->nextAddr = reinterpret_cast<LPVOID>((DWORD)page->pPage + filled);
