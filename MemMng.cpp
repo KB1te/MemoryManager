@@ -44,21 +44,21 @@ void MmInfo::MmRead(Mm *page, int dwSize,void* buff)
 
 int MmInfo::MmCheck(Mm *page)
 {
-	int empty = 0;
+	
 	int filled = 0;
 
 	DWORD read = (DWORD)page->pPage;
 
 	for (int i = 0; i < page->dwPage; i++) {
 		if (read++ == NULL) {
-			empty++;
+			filled--;
 		}
 		else {
 			filled++;
 		}
 	}
 	page->nextAddr = reinterpret_cast<LPVOID>((DWORD)page->pPage + filled);
-	return empty;
+	return filled;
 }
 
 
