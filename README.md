@@ -1,5 +1,5 @@
 # MemoryManager
-Um gerenciador de memória que permite você alocar espaço na memória de forma continua e segura
+Um gerenciador de memória que permite você alocar , realocar e limpar um espaço na memória de forma continua e segura
 
 
 
