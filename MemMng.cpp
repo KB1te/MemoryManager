@@ -19,7 +19,7 @@ void Mm::MmAlloc(Page *page,int dwSize)
 
 void Mm::MmReAlloc(Page *page, int dwSize)
 {
-	if (MmCheck(page) > dwSize) {
+	if (MmCheck(page) < dwSize) {
 		if (this->dwSize > 0) {
 			VirtualFree(this->Location, this->dwSize, MEM_DECOMMIT | MEM_RELEASE);
 			this->dwSize = dwSize;
