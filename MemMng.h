@@ -2,16 +2,15 @@
 #include <iostream>
 #include <Windows.h>
 
-class Mm;
+class Page;
 
-struct MmInfo {
+struct Mm {
 	
-	void	MmFree(Mm* page, int dwSize);
-	void	MmAlloc(Mm *page, int dwSize);
-	void	MmReAlloc(Mm *page, int dwSize);
-	void	MmWrite(Mm *page, int dwSize, void* buff);
-	void	MmRead(Mm *page, int dwSize, void* buff);
-	int	MmCheck(Mm *page);
+	void	MmFree(Page* page, int dwSize);
+	void	MmAlloc(Page *page, int dwSize);
+	void	MmReAlloc(Page *page, int dwSize);
+	LPVOID	GetLocationPtr();
+	int	MmCheck(Page *page);
 
 private:
 	LPVOID	Location;
@@ -19,9 +18,9 @@ private:
 };
 
 
-class Mm{
+class Page{
 public:
-	MmInfo	*CreatePage();
+	void	CreatePage();
 	LPVOID	pPage;
 	LPVOID	nextAddr;
 	int	dwPage;
