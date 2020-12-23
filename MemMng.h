@@ -10,11 +10,11 @@ struct Mm {
 	void	MmAlloc(Page *page, int dwSize);
 	void	MmReAlloc(Page *page, int dwSize);
 	LPVOID	GetLocationPtr();
-	int	MmCheck(Page *page);
+	int		MmCheck(Page *page);
 
 private:
 	LPVOID	Location;
-	int	dwSize;
+	int		dwSize;
 };
 
 
@@ -23,7 +23,7 @@ public:
 	void	CreatePage();
 	LPVOID	pPage;
 	LPVOID	nextAddr;
-	int	dwPage;
+	int		dwPage;
 };
 
 
