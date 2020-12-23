@@ -10,21 +10,18 @@ void Mm::MmFree(Page *page, int dwSize)
 void Mm::MmAlloc(Page *page,int dwSize)
 {
 	if (MmCheck(page) < dwSize) {
-		VirtualFree(page->nextAddr, dwSize, MEM_DECOMMIT | MEM_RELEASE);
-		MmCheck(page);
-		this->Location = VirtualAlloc(page->nextAddr, dwSize, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+		this->Location = VirtualAlloc(page->nextAddr, dwSize, MEM_COMMIT, PAGE_READWRITE);
 		this->dwSize = dwSize;
 	}	
 }
 
 void Mm::MmReAlloc(Page *page, int dwSize)
 {
-	if (MmCheck(page) < dwSize) {
+	if (MmCheck(page) > dwSize) {
 		if (this->dwSize > 0) {
-			VirtualFree(this->Location, this->dwSize, MEM_DECOMMIT | MEM_RELEASE);
 			this->dwSize = dwSize;
 			MmCheck(page);
-			VirtualAlloc(page->nextAddr, this->dwSize, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+			VirtualAlloc(page->nextAddr, this->dwSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 		}
 	}
 }
@@ -47,7 +44,7 @@ int Mm::MmCheck(Page *page){
 
 void Page::CreatePage()
 {
-	this->pPage = VirtualAlloc(NULL, 16000,MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
-	this->dwPage = 16000;
+	this->pPage = VirtualAlloc(NULL, 8000 , MEM_RESERVE, PAGE_READWRITE);
+	this->dwPage = 8000;
 	this->nextAddr = this->pPage;
 }
