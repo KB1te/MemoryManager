@@ -9,10 +9,12 @@ void Mm::MmFree(Page *page, int dwSize)
 
 void Mm::MmAlloc(Page *page,int dwSize)
 {
-	if (MmCheck(page) < dwSize) {
-		this->Location = VirtualAlloc(page->nextAddr, dwSize, MEM_COMMIT, PAGE_READWRITE);
-		this->dwSize = dwSize;
-	}	
+	if (dwSize > 0 || dwSize < page->dwPage) {
+		if (page->dwPage - MmCheck(page) > dwSize) {
+			this->Location = VirtualAlloc(page->nextAddr, dwSize, MEM_COMMIT, PAGE_READWRITE);
+			this->dwSize = dwSize;
+		}
+	}
 }
 
 void Mm::MmReAlloc(Page *page, int dwSize)
@@ -44,7 +46,10 @@ int Mm::MmCheck(Page *page){
 
 void Page::CreatePage()
 {
-	this->pPage = VirtualAlloc(NULL, 8000 , MEM_RESERVE, PAGE_READWRITE);
-	this->dwPage = 8000;
+	SYSTEM_INFO	sysInfo = { NULL };
+	GetSystemInfo(&sysInfo);
+	this->pPage = new BYTE[sysInfo.dwPageSize];
+	this->dwPage = sysInfo.dwPageSize;
 	this->nextAddr = this->pPage;
+	SecureZeroMemory(&sysInfo, sizeof(SYSTEM_INFO));
 }
