@@ -22,8 +22,7 @@ void Mm::MmReAlloc(Page *page, int dwSize)
 	if (MmCheck(page) > dwSize) {
 		if (this->dwSize > 0) {
 			this->dwSize = dwSize;
-			MmCheck(page);
-			VirtualAlloc(page->nextAddr, this->dwSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+			this->Location = VirtualAlloc(page->nextAddr, this->dwSize, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 		}
 	}
 }
